@@ -203,7 +203,22 @@ p {
 .search-input::placeholder {
     color: var(--text-muted);
 }
+.error-message {
+    text-align: center;
+    padding: 3rem;
+    color: #dc3545;
+}
 
+.error-message h2 {
+    margin-bottom: 1rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-style: italic;
+}
 /* Section Headers */
 .section-header {
     display: flex;

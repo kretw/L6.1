@@ -18,8 +18,6 @@ export class Storage {
     deleteUser(userId) {
         const users = this.getUsers().filter(user => user.id !== userId);
         localStorage.setItem(this.usersKey, JSON.stringify(users));
-        
-        // Также удаляем todos пользователя
         this.deleteUserTodos(userId);
     }
 

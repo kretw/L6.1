@@ -64,13 +64,19 @@ export class Router {
         return id;
     }
 
-    async showUsers() {
+async showUsers() {
+    try {
         const userList = new UserList(this.app);
         const view = await userList.render();
         this.app.setView(view);
+    } catch (error) {
+        console.error('Error showing users:', error);
+        this.showError('Failed to load users');
     }
+}
 
-    async showUserTodos() {
+async showUserTodos() {
+    try {
         const userId = this.getUserIdFromHash();
         if (userId) {
             const todoList = new TodoList(this.app, userId);
@@ -79,9 +85,14 @@ export class Router {
         } else {
             this.showUsers();
         }
+    } catch (error) {
+        console.error('Error showing todos:', error);
+        this.showError('Failed to load todos');
     }
+}
 
-    async showUserPosts() {
+async showUserPosts() {
+    try {
         const userId = this.getUserIdFromHash();
         if (userId) {
             const postList = new PostList(this.app, userId);
@@ -90,7 +101,22 @@ export class Router {
         } else {
             this.showUsers();
         }
+    } catch (error) {
+        console.error('Error showing posts:', error);
+        this.showError('Failed to load posts');
     }
+}
+
+showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = `
+        <h2>Error</h2>
+        <p>${message}</p>
+        <button onclick="location.reload()" class="btn btn-primary">Reload Page</button>
+    `;
+    this.app.setView(errorDiv);
+}
 
     async showPostComments() {
         const postId = this.getPostIdFromHash();

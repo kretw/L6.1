@@ -226,19 +226,22 @@ export class UserList {
         }
     }
 
-    async loadData() {
-        try {
-            const apiUsers = await API.getUsers();
-            const customUsers = this.storage.getUsers();
-            
-            this.users = [...apiUsers, ...customUsers];
-            this.filterUsers();
-        } catch (error) {
-            console.error('Error loading users:', error);
-            this.users = this.storage.getUsers();
-            this.filterUsers();
-        }
+async loadData() {
+    try {
+        console.log('Loading users data...');
+        const apiUsers = await API.getUsers();
+        const customUsers = this.storage.getUsers();
+        
+        this.users = [...apiUsers, ...customUsers];
+        this.filterUsers();
+        
+        console.log('Loaded users:', this.users);
+    } catch (error) {
+        console.error('Error loading users:', error);
+        this.users = this.storage.getUsers();
+        this.filterUsers();
     }
+}
 
     filterUsers() {
         const searchTerm = this.app.getSearchTerm();
