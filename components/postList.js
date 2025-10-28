@@ -102,7 +102,7 @@ export class PostList {
         try {
             const users = await API.getUsers();
             this.user = users.find(user => user.id === this.userId);
-
+            
             this.posts = await API.getUserPosts(this.userId);
             this.filterPosts();
         } catch (error) {

@@ -1,13 +1,35 @@
 export class Search {
     constructor(app) {
         this.app = app;
-        this.container = document.getElementById('search');
         this.currentTerm = '';
         this.debounceTimer = null;
-        this.render();
+        this.container = null;
+        this.init();
+    }
+
+    init() {
+        this.container = document.getElementById('search');
+        if (this.container) {
+            this.render();
+        } else {
+            console.warn('Search container not found');
+            this.createContainer();
+        }
+    }
+
+    createContainer() {
+        const navSection = document.querySelector('.app-nav');
+        if (navSection) {
+            this.container = document.createElement('div');
+            this.container.id = 'search';
+            navSection.appendChild(this.container);
+            this.render();
+        }
     }
 
     render() {
+        if (!this.container) return;
+        
         this.container.innerHTML = '';
         
         const searchContainer = document.createElement('div');
@@ -32,7 +54,9 @@ export class Search {
         
         this.debounceTimer = setTimeout(() => {
             this.currentTerm = term.trim().toLowerCase();
-            this.app.router.handleRouteChange();
+            if (this.app.router) {
+                this.app.router.handleRouteChange();
+            }
         }, 300);
     }
 

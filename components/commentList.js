@@ -100,7 +100,7 @@ export class CommentList {
     async loadData() {
         try {
             this.post = { id: this.postId, title: `Post #${this.postId}` };
-
+            
             this.comments = await API.getPostComments(this.postId);
             this.filterComments();
         } catch (error) {

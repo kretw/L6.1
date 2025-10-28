@@ -116,7 +116,6 @@ export class UserList {
         actions.appendChild(todosBtn);
         actions.appendChild(postsBtn);
         
-        // Показываем кнопку удаления только для пользователей из localStorage
         if (user.isCustom) {
             actions.appendChild(deleteBtn);
         }
@@ -209,7 +208,7 @@ export class UserList {
             email: formData.get('email'),
             username: formData.get('username'),
             isCustom: true,
-            id: Date.now() // Генерируем ID на основе времени
+            id: Date.now()
         };
         
         this.storage.saveUser(userData);

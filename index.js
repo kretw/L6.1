@@ -1,14 +1,13 @@
 import { Router } from './components/router.js';
 import { Breadcrumbs } from './components/breadcrumbs.js';
 import { Search } from './components/search.js';
-import { UserList } from './components/userList.js';
 
 class App {
     constructor() {
         this.root = document.getElementById('root');
         this.router = new Router(this);
-        this.breadcrumbs = new Breadcrumbs();
-        this.search = new Search(this);
+        this.breadcrumbs = null;
+        this.search = null;
         this.currentView = null;
         
         this.init();
@@ -16,6 +15,8 @@ class App {
 
     init() {
         this.renderLayout();
+        this.breadcrumbs = new Breadcrumbs();
+        this.search = new Search(this);
         this.router.init();
     }
 
@@ -72,22 +73,23 @@ class App {
 
     setView(viewComponent) {
         const content = document.getElementById('content');
+        if (!content || !viewComponent) return;
+        
         content.innerHTML = '';
-        
-        if (viewComponent) {
-            content.appendChild(viewComponent);
-        }
-        
+        content.appendChild(viewComponent);
         this.currentView = viewComponent;
     }
 
     updateBreadcrumbs(paths) {
-        this.breadcrumbs.update(paths);
+        if (this.breadcrumbs) {
+            this.breadcrumbs.update(paths);
+        }
     }
 
     getSearchTerm() {
-        return this.search.getCurrentTerm();
+        return this.search ? this.search.getCurrentTerm() : '';
     }
 }
 
+// Инициализация приложения
 new App();

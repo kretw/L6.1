@@ -29,6 +29,12 @@ export class Router {
         if (handler) {
             handler();
             this.updateBrowserHistory(path);
+        } else if (path.startsWith('users#todos#')) {
+            this.showUserTodos();
+        } else if (path.startsWith('users#posts#')) {
+            this.showUserPosts();
+        } else if (path.startsWith('users#posts#comments#')) {
+            this.showPostComments();
         } else {
             this.showUsers();
         }
@@ -41,44 +47,60 @@ export class Router {
 
     updateBreadcrumbs(path) {
         const paths = path.split('#');
-        const breadcrumbPaths = paths.map((p, index) => ({
-            name: this.getBreadcrumbName(p, index),
-            path: paths.slice(0, index + 1).join('#')
-        }));
+        const breadcrumbPaths = paths.map((p, index) => {
+            const cleanPath = isNaN(p) ? p : this.getBreadcrumbNameForId(p, index, paths);
+            return {
+                name: cleanPath,
+                path: paths.slice(0, index + 1).join('#')
+            };
+        });
         this.app.updateBreadcrumbs(breadcrumbPaths);
     }
 
-    getBreadcrumbName(path, index) {
-        const names = {
-            'users': 'Users',
-            'todos': 'Todos',
-            'posts': 'Posts',
-            'comments': 'Comments'
-        };
-        return names[path] || path;
+    getBreadcrumbNameForId(id, index, paths) {
+        if (index === 2 && paths[1] === 'todos') return `User ${id} Todos`;
+        if (index === 2 && paths[1] === 'posts') return `User ${id} Posts`;
+        if (index === 3 && paths[2] === 'comments') return `Post ${id} Comments`;
+        return id;
     }
 
-    showUsers() {
+    async showUsers() {
         const userList = new UserList(this.app);
-        this.app.setView(userList.render());
+        const view = await userList.render();
+        this.app.setView(view);
     }
 
-    showUserTodos() {
+    async showUserTodos() {
         const userId = this.getUserIdFromHash();
-        const todoList = new TodoList(this.app, userId);
-        this.app.setView(todoList.render());
+        if (userId) {
+            const todoList = new TodoList(this.app, userId);
+            const view = await todoList.render();
+            this.app.setView(view);
+        } else {
+            this.showUsers();
+        }
     }
 
-    showUserPosts() {
+    async showUserPosts() {
         const userId = this.getUserIdFromHash();
-        const postList = new PostList(this.app, userId);
-        this.app.setView(postList.render());
+        if (userId) {
+            const postList = new PostList(this.app, userId);
+            const view = await postList.render();
+            this.app.setView(view);
+        } else {
+            this.showUsers();
+        }
     }
 
-    showPostComments() {
+    async showPostComments() {
         const postId = this.getPostIdFromHash();
-        const commentList = new CommentList(this.app, postId);
-        this.app.setView(commentList.render());
+        if (postId) {
+            const commentList = new CommentList(this.app, postId);
+            const view = await commentList.render();
+            this.app.setView(view);
+        } else {
+            this.showUsers();
+        }
     }
 
     getUserIdFromHash() {
